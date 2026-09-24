@@ -14,6 +14,9 @@ router.get('/admin/teams', requireAuth, admins.home);
 router.get('/admin/leagues', requireAuth, admins.home);
 router.get('/admin/nations', requireAuth, admins.home);
 router.get('/admin/catalogs', requireAuth, admins.home);
+router.get('/admin/academic', admins.academic);
+
+
 // api nations
 router.get('/api/v1/nations', nationApis.listNations);
 router.get('/api/v1/nations/:id', nationApis.getNationById);
@@ -22,5 +25,6 @@ router.put('/api/v1/nations/:id', nationApis.updateNation);
 router.delete('/api/v1/nations/:id', nationApis.deleteNation);
 // carrers
 router.get('/admin/carrers', carrers.home);
+
 
 export default router;
