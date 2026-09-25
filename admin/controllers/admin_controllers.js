@@ -8,11 +8,3 @@ export function home(req, res) {
       'Esta es una aplicación de ejemplo creada con Node.js, Express y EJS.'
   });
 }
-
-export function academic(req, res) {
-  return res.render('admin/academic', {
-    title: 'Gestión Académica',
-    currentPage: 'academic',
-    description: 'Administración de la información académica.'
-  });
-}
