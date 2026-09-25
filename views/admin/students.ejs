@@ -1,0 +1,413 @@
+<% layout("layouts/admin2") %>
+
+<main class="main-content">
+  <div class="container-fluid">
+
+    <h3 class="mb-4">
+      <a href="/admin/academic">
+        <i class="fa fa-book me-2"></i>
+        Gestión Académica
+      </a>
+      / Alumnos
+    </h3>
+
+    <div class="row">
+
+      <!-- FORMULARIO -->
+      <div class="col-lg-4 col-md-5 mb-4">
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <h6 class="mb-0" id="cardTitle">
+              <i class="fa fa-plus me-2"></i>
+              Nuevo Alumno
+            </h6>
+
+          </div>
+
+          <div class="card-body">
+
+            <form>
+
+              <div class="mb-3">
+
+                <label for="code" class="form-label">
+                  Código
+                </label>
+
+                <input
+                  type="text"
+                  id="code"
+                  class="form-control"
+                  placeholder="Ingrese el código..."
+                  required
+                >
+
+              </div>
+
+
+              <div class="mb-3">
+
+                <label for="name" class="form-label">
+                  Nombre
+                </label>
+
+                <input
+                  type="text"
+                  id="name"
+                  class="form-control"
+                  placeholder="Ingrese el nombre..."
+                  required
+                >
+
+              </div>
+
+
+              <div class="mb-3">
+
+                <label for="career" class="form-label">
+                  Carrera
+                </label>
+
+                <input
+                  type="text"
+                  id="career"
+                  class="form-control"
+                  placeholder="Ingrese la carrera..."
+                  required
+                >
+
+              </div>
+
+
+              <div class="mb-3">
+
+                <label for="semester" class="form-label">
+                  Ciclo
+                </label>
+
+                <input
+                  type="number"
+                  id="semester"
+                  class="form-control"
+                  placeholder="Ingrese el ciclo..."
+                  required
+                >
+
+              </div>
+
+
+              <input
+                type="hidden"
+                id="studentId"
+              >
+
+              <div
+                id="alertMessage"
+                class="alert d-none"
+              >
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+
+                <button
+                  class="btn btn-outline-secondary"
+                  onclick="limpiar(event)"
+                >
+                  <i class="fa fa-refresh me-1"></i>
+                  Limpiar
+                </button>
+
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  id="btnGuardar"
+                  onclick="guardar(event)"
+                >
+                  <i class="fa fa-save me-1"></i>
+                  Guardar
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- LISTADO -->
+      <div class="col-lg-8 col-md-7 mb-4">
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <h6 class="mb-0">
+              <i class="fa fa-list me-2"></i>
+              Lista de Alumnos
+            </h6>
+
+          </div>
+
+
+          <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+              <div class="text-muted">
+                <i class="fa fa-graduation-cap me-1"></i>
+                Alumnos registrados
+              </div>
+
+              <div>
+                <button
+                  class="btn btn-success"
+                  onclick="agregar(event)"
+                >
+                  <i class="fa fa-plus"></i>
+                  Agregar Registro
+                </button>
+              </div>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-responsive">
+
+              <table
+                class="table table-striped table-hover"
+                id="students"
+              >
+
+                <thead>
+
+                  <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Carrera</th>
+                    <th>Ciclo</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                  <% if (students && students.length > 0) { %>
+
+                    <% for (const student of students) { %>
+
+                      <tr>
+
+                        <td>
+                          <%= student.id %>
+                        </td>
+
+                        <td>
+                          <%= student.code %>
+                        </td>
+
+                        <td>
+                          <%= student.name %>
+                        </td>
+
+                        <td>
+                          <%= student.career %>
+                        </td>
+
+                        <td>
+                          <%= student.semester %>
+                        </td>
+
+                        <td class="text-end">
+
+                          <button
+                            class="btn btn-sm btn-outline-secondary me-1"
+                            onclick="editar(<%= student.id %>, event)"
+                          >
+                            <i class="fa fa-edit"></i>
+                            Editar
+                          </button>
+
+                          <button
+                            class="btn btn-sm btn-outline-danger"
+                            onclick="eliminar(<%= student.id %>, event)"
+                          >
+                            <i class="fa fa-trash"></i>
+                            Eliminar
+                          </button>
+
+                        </td>
+
+                      </tr>
+
+                    <% } %>
+
+                  <% } else { %>
+
+                    <tr>
+
+                      <td
+                        colspan="6"
+                        class="text-center text-muted py-4"
+                      >
+                        No se encontraron alumnos.
+                      </td>
+
+                    </tr>
+
+                  <% } %>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</main>
+<script>
+  let studentRows = document.getElementById("students").children[1].children.length;
+
+  function agregar(event){
+    document.getElementById("studentId").value = "";
+    document.getElementById("code").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("career").value = "";
+    document.getElementById("semester").value = "";
+    document.getElementById("cardTitle").innerHTML = "Nuevo Alumno";
+  }
+
+  function limpiar(event){
+    event.preventDefault();
+    document.getElementById("studentId").value = "";
+    document.getElementById("code").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("career").value = "";
+    document.getElementById("semester").value = "";
+    document.getElementById("cardTitle").innerHTML = "Nuevo Alumno";
+  }
+  
+  function guardar(event){
+    event.preventDefault();
+    let studentId = document.getElementById("studentId").value;
+    let code = document.getElementById("code").value;
+    let name = document.getElementById("name").value;
+    let career = document.getElementById("career").value;
+    let semester = document.getElementById("semester").value;
+    let studentTable = document.getElementById("students");
+
+    // =========================
+    // VALIDACIÓN
+    // =========================
+
+    if(code == "" || name == "" || career == "" || semester == ""){
+      alertMessage.classList.remove("d-none");
+      alertMessage.classList.add("alert-danger");
+      alertMessage.classList.remove("alert-success");
+      alertMessage.innerHTML = "Complete todos los campos";
+      return;
+    }
+
+    if (studentId==""){
+      let tr = document.createElement("TR");
+      let td1 = document.createElement("TD");
+      let td2 = document.createElement("TD");
+      let td3 = document.createElement("TD");
+      let td4 = document.createElement("TD");
+      let td5 = document.createElement("TD");
+      let td6 = document.createElement("TD");
+
+      studentRows = studentRows + 1;
+      td1.innerHTML = studentRows;
+      td2.innerHTML = code;
+      td3.innerHTML = name;
+      td4.innerHTML = career;
+      td5.innerHTML = semester;
+
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tr.appendChild(td3);
+      tr.appendChild(td4);
+      tr.appendChild(td5);
+      tr.appendChild(td6);
+
+      console.log(tr);
+
+      studentTable.children[1].appendChild(tr);
+
+      // MENSAJE VERDE
+
+      alertMessage.classList.remove("d-none");
+      alertMessage.classList.remove("alert-danger");
+      alertMessage.classList.add("alert-success");
+
+      alertMessage.innerHTML = "Alumno registrado correctamente";
+      agregar();
+
+    } else{
+      let tbody = studentTable.children[1];
+      for(let tr of tbody.children){
+        if(tr.children[0].innerHTML.trim() == studentId){
+          tr.children[1].innerHTML = code;
+          tr.children[2].innerHTML = name;
+          tr.children[3].innerHTML = career;
+          tr.children[4].innerHTML = semester;
+          document.getElementById("studentId").value = "";
+          document.getElementById("code").value = "";
+          document.getElementById("name").value = "";
+          document.getElementById("career").value = "";
+          document.getElementById("semester").value = "";
+          document.getElementById("cardTitle").innerHTML = "Nuevo Alumno";
+
+          // MENSAJE VERDE
+
+          alertMessage.classList.remove("d-none");
+          alertMessage.classList.remove("alert-danger");
+          alertMessage.classList.add("alert-success");
+
+          alertMessage.innerHTML = "Alumno actualizado correctamente";
+          agregar();
+        }
+      }
+    } 
+  }
+
+  function editar(id, event){
+    let tr = event.currentTarget.parentElement.parentElement;
+    let idRow = tr.children[0].innerHTML;
+    let code = tr.children[1].innerHTML;
+    let name = tr.children[2].innerHTML;
+    let career = tr.children[3].innerHTML;
+    let semester = tr.children[4].innerHTML;
+
+    document.getElementById("studentId").value = id;
+    document.getElementById("code").value = code.trim();
+    document.getElementById("name").value = name.trim();
+    document.getElementById("career").value = career.trim();
+    document.getElementById("semester").value = semester.trim();
+    document.getElementById("cardTitle").innerHTML = "Editar Alumno";
+  }
+
+  function eliminar(id, event){
+    let tr = event.currentTarget.parentElement.parentElement;
+    tr.remove();
+  }
+
+</script>

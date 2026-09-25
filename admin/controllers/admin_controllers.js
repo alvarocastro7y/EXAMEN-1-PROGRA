@@ -16,4 +16,3 @@ export function academic(req, res) {
     description: 'Administración de la información académica.'
   });
 }
-
